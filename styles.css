@@ -251,7 +251,20 @@ a {
   place-items: center;
   border-radius: 18px;
   background: rgba(201, 161, 107, 0.22);
-  font-size: 1.5rem;
+  color: var(--brown);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 247, 233, 0.75),
+    0 8px 18px rgba(112, 66, 39, 0.08);
+}
+
+.gift-item__icon svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .gift-item strong {
