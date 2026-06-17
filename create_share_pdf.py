@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import fitz
-from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageOps
+from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont, ImageOps
 
 
 ROOT = Path(__file__).resolve().parent
@@ -19,8 +19,8 @@ def ensure_dirs() -> None:
     PREVIEW_PNG.parent.mkdir(parents=True, exist_ok=True)
 
 
-def load_font(size: int, bold: bool = False, script: bool = False, emoji: bool = False):
-    candidates = []
+def load_font(size: int, *, bold: bool = False, script: bool = False, emoji: bool = False):
+    candidates: list[str] = []
     if emoji:
         candidates.extend(
             [
@@ -57,7 +57,22 @@ def load_font(size: int, bold: bool = False, script: bool = False, emoji: bool =
     return ImageFont.load_default()
 
 
-def centered_text(draw: ImageDraw.ImageDraw, box, text, font, fill, spacing=6):
+def trim_logo(image: Image.Image) -> Image.Image:
+    rgba = image.convert("RGBA")
+    pixels = rgba.load()
+    for y in range(rgba.height):
+        for x in range(rgba.width):
+            r, g, b, a = pixels[x, y]
+            if r > 245 and g > 245 and b > 245:
+                pixels[x, y] = (255, 255, 255, 0)
+
+    bbox = rgba.getbbox()
+    if bbox:
+        rgba = rgba.crop(bbox)
+    return rgba
+
+
+def centered_text(draw: ImageDraw.ImageDraw, box, text, font, fill, *, spacing=6):
     x0, y0, x1, y1 = box
     bbox = draw.multiline_textbbox((0, 0), text, font=font, spacing=spacing, align="center")
     width = bbox[2] - bbox[0]
@@ -72,10 +87,10 @@ def wrapped_text(text: str, font, max_width: int, draw: ImageDraw.ImageDraw) -> 
     lines: list[str] = []
     current = ""
     for word in words:
-        test = word if not current else f"{current} {word}"
-        bbox = draw.textbbox((0, 0), test, font=font)
+        candidate = word if not current else f"{current} {word}"
+        bbox = draw.textbbox((0, 0), candidate, font=font)
         if bbox[2] - bbox[0] <= max_width:
-            current = test
+            current = candidate
         else:
             if current:
                 lines.append(current)
@@ -94,71 +109,65 @@ def build_cover_image() -> tuple[Image.Image, tuple[int, int, int, int]]:
     canvas = background.convert("RGBA")
     draw = ImageDraw.Draw(canvas)
 
-    panel = (120, 92, 1120, 1662)
-    draw.rounded_rectangle((panel[0] + 10, panel[1] + 14, panel[2] + 10, panel[3] + 14), radius=42, fill=(48, 26, 14, 74))
-    draw.rounded_rectangle(panel, radius=42, fill=(251, 246, 236, 236), outline=(145, 100, 62, 255), width=3)
-    draw.rounded_rectangle((144, 116, 1096, 1638), radius=34, outline=(211, 186, 150, 255), width=2)
+    panel = (94, 88, 1146, 1668)
+    draw.rounded_rectangle((panel[0] + 10, panel[1] + 14, panel[2] + 10, panel[3] + 14), radius=42, fill=(48, 26, 14, 78))
+    draw.rounded_rectangle(panel, radius=42, fill=(251, 246, 236, 238), outline=(145, 100, 62, 255), width=3)
+    draw.rounded_rectangle((120, 114, 1120, 1642), radius=34, outline=(211, 186, 150, 255), width=2)
 
-    logo = Image.open(LOGO_PATH).convert("RGBA")
-    logo.thumbnail((420, 220), Image.Resampling.LANCZOS)
-    lx = int((PAGE_SIZE[0] - logo.width) / 2)
-    canvas.alpha_composite(logo, (lx, 138))
+    logo = trim_logo(Image.open(LOGO_PATH))
+    logo.thumbnail((580, 250), Image.Resampling.LANCZOS)
+    logo_x = int((PAGE_SIZE[0] - logo.width) / 2)
+    canvas.alpha_composite(logo, (logo_x, 108))
 
-    title_font = load_font(42, bold=True)
-    body_font = load_font(28)
-    sign_font = load_font(31, bold=True)
-    script_font = load_font(42, script=True)
-    emoji_font = load_font(30, emoji=True)
+    title_font = load_font(48, bold=True)
+    body_font = load_font(31)
+    sign_font = load_font(35, bold=True)
+    accent_font = load_font(33, emoji=True)
 
-    centered_text(draw, (180, 360, 1060, 398), "🤠🐎", emoji_font, (96, 59, 35, 255))
-    centered_text(draw, (180, 394, 1060, 470), "Ô de casa, vaqueiro(a)!", title_font, (96, 59, 35, 255))
+    centered_text(draw, (170, 314, 1070, 354), "\U0001F920 \U0001F40E", accent_font, (96, 59, 35, 255))
+    centered_text(draw, (150, 356, 1090, 438), "\u00d4 de casa, vaqueiro(a)!", title_font, (96, 59, 35, 255))
 
-    message_1 = (
-        "Estamos felizes demais em saber que você vai participar da primeira grande vaquejada "
+    opening = (
+        "Estamos felizes demais em saber que voc\u00ea vai participar da primeira grande vaquejada "
         "do nosso pequeno Gael!\n\n"
-        "Prepare o chapéu, a bota e a animação para viver um dia especial, cheio de alegria, "
-        "diversão e boas lembranças no Haras GB. E para deixar a festa ainda mais bonita e no "
-        "clima da comemoração, convidamos você a vir com seu traje country. Mas não se preocupe "
-        "se não tiver um look no estilo: sua presença é o que realmente faz essa festa acontecer!"
+        "Prepare o chap\u00e9u, a bota e a anima\u00e7\u00e3o para viver um dia especial, cheio de alegria, "
+        "divers\u00e3o e boas lembran\u00e7as no Haras GB. E para deixar a festa ainda mais bonita e no "
+        "clima da comemora\u00e7\u00e3o, convidamos voc\u00ea a vir com seu traje country. Mas n\u00e3o se preocupe "
+        "se n\u00e3o tiver um look no estilo: sua presen\u00e7a \u00e9 o que realmente faz essa festa acontecer!"
     )
-    message_2 = (
-        "Agradecemos por fazer parte desse momento tão importante na vida do nosso pequeno "
-        "vaqueiro. Será uma honra celebrar ao seu lado essa data tão especial!\n\n"
-        "Com carinho,\n\n"
-        "🤎 Família do Gael\n"
-        "🐎 Haras GB"
+    thanks = (
+        "Agradecemos por fazer parte desse momento t\u00e3o importante na vida do nosso pequeno "
+        "vaqueiro. Ser\u00e1 uma honra celebrar ao seu lado essa data t\u00e3o especial!"
     )
 
-    max_text_width = 760
-    wrapped_1 = "\n\n".join(
-        wrapped_text(paragraph, body_font, max_text_width, draw) for paragraph in message_1.split("\n\n")
+    max_text_width = 796
+    wrapped_opening = "\n\n".join(
+        wrapped_text(paragraph, body_font, max_text_width, draw) for paragraph in opening.split("\n\n")
     )
-    wrapped_2 = "\n\n".join(
-        wrapped_text(paragraph, body_font, max_text_width, draw) for paragraph in message_2.split("\n\n")
-    )
+    wrapped_thanks = wrapped_text(thanks, body_font, max_text_width, draw)
 
-    message_panel_1 = (188, 496, 1052, 1044)
-    draw.rounded_rectangle((message_panel_1[0] + 8, message_panel_1[1] + 10, message_panel_1[2] + 8, message_panel_1[3] + 10), radius=30, fill=(97, 61, 35, 30))
-    draw.rounded_rectangle(message_panel_1, radius=30, fill=(255, 251, 244, 168), outline=(216, 191, 152, 255), width=2)
-    centered_text(draw, (224, 548, 1016, 992), wrapped_1, body_font, (112, 77, 50, 255), spacing=12)
+    main_panel = (166, 470, 1074, 1408)
+    draw.rounded_rectangle((main_panel[0] + 8, main_panel[1] + 10, main_panel[2] + 8, main_panel[3] + 10), radius=34, fill=(97, 61, 35, 34))
+    draw.rounded_rectangle(main_panel, radius=34, fill=(255, 251, 244, 180), outline=(216, 191, 152, 255), width=2)
 
-    message_panel_2 = (188, 1084, 1052, 1432)
-    draw.rounded_rectangle((message_panel_2[0] + 8, message_panel_2[1] + 10, message_panel_2[2] + 8, message_panel_2[3] + 10), radius=30, fill=(97, 61, 35, 30))
-    draw.rounded_rectangle(message_panel_2, radius=30, fill=(255, 251, 244, 168), outline=(216, 191, 152, 255), width=2)
-    centered_text(draw, (224, 1128, 1016, 1268), wrapped_text(message_2.split("\n\n")[0], body_font, max_text_width, draw), body_font, (112, 77, 50, 255), spacing=12)
-    centered_text(draw, (224, 1290, 1016, 1324), "Com carinho,", body_font, (112, 77, 50, 255))
-    centered_text(draw, (224, 1342, 1016, 1382), "Família do Gael", sign_font, (98, 62, 38, 255))
-    centered_text(draw, (224, 1392, 1016, 1430), "Haras GB", script_font, (109, 118, 51, 255))
+    centered_text(draw, (218, 528, 1022, 1018), wrapped_opening, body_font, (112, 77, 50, 255), spacing=10)
 
-    button_rect = (292, 1508, 948, 1588)
+    divider_y = 1072
+    draw.line((326, divider_y, 914, divider_y), fill=(202, 173, 133, 255), width=2)
+    draw.ellipse((611, divider_y - 8, 629, divider_y + 8), fill=(168, 128, 88, 255))
+
+    centered_text(draw, (218, 1104, 1022, 1246), wrapped_thanks, body_font, (112, 77, 50, 255), spacing=10)
+    centered_text(draw, (218, 1242, 1022, 1280), "Com carinho,", body_font, (112, 77, 50, 255))
+    centered_text(draw, (218, 1284, 1022, 1318), "\u2665", accent_font, (125, 84, 58, 255))
+    centered_text(draw, (218, 1318, 1022, 1360), "Fam\u00edlia do Gael", sign_font, (98, 62, 38, 255))
+    centered_text(draw, (218, 1358, 1022, 1392), "Haras GB", body_font, (109, 118, 51, 255))
+
+    button_rect = (286, 1452, 954, 1542)
     draw.rounded_rectangle((button_rect[0] + 4, button_rect[1] + 8, button_rect[2] + 4, button_rect[3] + 8), radius=26, fill=(63, 31, 15, 110))
     draw.rounded_rectangle(button_rect, radius=26, fill=(109, 66, 39, 255), outline=(67, 37, 20, 255), width=3)
-    draw.rounded_rectangle((button_rect[0] + 6, button_rect[1] + 6, button_rect[2] - 6, button_rect[1] + 30), radius=20, fill=(188, 142, 95, 170))
-    button_font = load_font(30, bold=True)
+    draw.rounded_rectangle((button_rect[0] + 6, button_rect[1] + 6, button_rect[2] - 6, button_rect[1] + 34), radius=20, fill=(188, 142, 95, 170))
+    button_font = load_font(32, bold=True)
     centered_text(draw, button_rect, "ABRIR CONVITE OFICIAL", button_font, (251, 241, 222, 255))
-
-    footer_font = load_font(20, bold=True)
-    centered_text(draw, (200, 1606, 1040, 1644), "HARAS GB", footer_font, (116, 78, 49, 210))
 
     return canvas.convert("RGB"), button_rect
 
