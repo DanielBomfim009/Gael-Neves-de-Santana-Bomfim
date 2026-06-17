@@ -91,16 +91,28 @@ def build_cover_image() -> tuple[Image.Image, tuple[int, int, int, int]]:
     draw.rounded_rectangle(panel, radius=42, fill=(251, 244, 231, 240), outline=(145, 100, 62, 255), width=4)
     draw.rounded_rectangle((116, 116, 1124, 1638), radius=34, outline=(205, 176, 137, 255), width=2)
 
-    tag_box = (260, 154, 980, 218)
-    draw.rounded_rectangle(tag_box, radius=20, fill=(225, 204, 169, 255))
-    tag_font = load_font(28, bold=True)
-    centered_text(draw, tag_box, "CONVITE OFICIAL", tag_font, (93, 56, 33, 255))
+    seal_center = (620, 176)
+    draw.ellipse((seal_center[0] - 74, seal_center[1] - 74, seal_center[0] + 74, seal_center[1] + 74), fill=(113, 71, 43, 255))
+    draw.ellipse((seal_center[0] - 62, seal_center[1] - 62, seal_center[0] + 62, seal_center[1] + 62), outline=(219, 191, 147, 255), width=3)
+    draw.ellipse((seal_center[0] - 50, seal_center[1] - 50, seal_center[0] + 50, seal_center[1] + 50), fill=(245, 232, 208, 255))
+    seal_font = load_font(26, bold=True)
+    centered_text(draw, (seal_center[0] - 54, seal_center[1] - 44, seal_center[0] + 54, seal_center[1] + 14), "HARAS\nGB", seal_font, (99, 61, 36, 255), spacing=0)
 
+    ribbon_box = (354, 258, 886, 320)
+    draw.rounded_rectangle(ribbon_box, radius=20, fill=(225, 204, 169, 255))
+    draw.polygon([(334, 289), (354, 270), (354, 308)], fill=(183, 151, 111, 255))
+    draw.polygon([(906, 289), (886, 270), (886, 308)], fill=(183, 151, 111, 255))
+    tag_font = load_font(26, bold=True)
+    centered_text(draw, ribbon_box, "CONVITE OFICIAL", tag_font, (93, 56, 33, 255))
+
+    quote_font = load_font(104, script=True)
     title_font = load_font(44, bold=True)
     body_font = load_font(27)
     sign_font = load_font(30, bold=True)
 
-    centered_text(draw, (180, 258, 1060, 332), "O de casa, vaqueiro(a)!", title_font, (102, 64, 38, 255))
+    draw.text((184, 346), '"', font=quote_font, fill=(199, 175, 133, 255))
+    draw.text((968, 346), '"', font=quote_font, fill=(199, 175, 133, 255))
+    centered_text(draw, (180, 372, 1060, 446), "O de casa, vaqueiro(a)!", title_font, (102, 64, 38, 255))
 
     message_1 = (
         "Prepare o chapeu, a bota e a animacao para viver um dia especial, cheio de alegria, "
@@ -116,20 +128,29 @@ def build_cover_image() -> tuple[Image.Image, tuple[int, int, int, int]]:
     wrapped_1 = wrapped_text(message_1, body_font, max_text_width, draw)
     wrapped_2 = wrapped_text(message_2, body_font, max_text_width, draw)
 
-    text_box_1 = (200, 370, 1040, 1010)
+    message_panel = (176, 470, 1064, 1272)
+    draw.rounded_rectangle((message_panel[0] + 8, message_panel[1] + 10, message_panel[2] + 8, message_panel[3] + 10), radius=34, fill=(97, 61, 35, 36))
+    draw.rounded_rectangle(message_panel, radius=34, fill=(255, 250, 242, 194), outline=(212, 187, 148, 255), width=2)
+
+    text_box_1 = (216, 520, 1024, 950)
     centered_text(draw, text_box_1, wrapped_1, body_font, (112, 77, 50, 255), spacing=12)
 
-    divider_y = 1046
-    draw.line((320, divider_y, 920, divider_y), fill=(198, 169, 128, 255), width=2)
+    divider_y = 995
+    draw.line((356, divider_y, 884, divider_y), fill=(198, 169, 128, 255), width=2)
+    draw.ellipse((602, divider_y - 8, 618, divider_y + 8), fill=(166, 128, 90, 255))
 
-    text_box_2 = (220, 1086, 1020, 1288)
+    text_box_2 = (228, 1042, 1012, 1186)
     centered_text(draw, text_box_2, wrapped_2, body_font, (112, 77, 50, 255), spacing=12)
 
-    centered_text(draw, (240, 1320, 1000, 1366), "Com carinho,", body_font, (112, 77, 50, 255))
-    centered_text(draw, (220, 1382, 1020, 1470), "Familia do Gael", sign_font, (98, 62, 38, 255))
-    centered_text(draw, (220, 1450, 1020, 1512), "Haras GB", load_font(40, script=True), (109, 118, 51, 255))
+    centered_text(draw, (240, 1214, 1000, 1250), "Com carinho,", body_font, (112, 77, 50, 255))
+    centered_text(draw, (220, 1270, 1020, 1332), "Familia do Gael", sign_font, (98, 62, 38, 255))
+    centered_text(draw, (220, 1328, 1020, 1394), "Haras GB", load_font(40, script=True), (109, 118, 51, 255))
 
-    button_rect = (274, 1558, 966, 1632)
+    note_box = (248, 1418, 992, 1484)
+    draw.rounded_rectangle(note_box, radius=18, fill=(233, 219, 194, 255))
+    centered_text(draw, note_box, "Toque no botao abaixo para abrir o convite interativo", load_font(22, bold=True), (113, 71, 43, 255))
+
+    button_rect = (274, 1516, 966, 1594)
     draw.rounded_rectangle((button_rect[0] + 4, button_rect[1] + 8, button_rect[2] + 4, button_rect[3] + 8), radius=26, fill=(63, 31, 15, 110))
     draw.rounded_rectangle(button_rect, radius=26, fill=(109, 66, 39, 255), outline=(67, 37, 20, 255), width=3)
     draw.rounded_rectangle((button_rect[0] + 6, button_rect[1] + 6, button_rect[2] - 6, button_rect[1] + 30), radius=20, fill=(188, 142, 95, 170))
@@ -137,7 +158,7 @@ def build_cover_image() -> tuple[Image.Image, tuple[int, int, int, int]]:
     centered_text(draw, button_rect, "ABRIR CONVITE OFICIAL", button_font, (251, 241, 222, 255))
 
     footer_font = load_font(20, bold=True)
-    centered_text(draw, (200, 1670, 1040, 1714), "HARAS GB", footer_font, (116, 78, 49, 210))
+    centered_text(draw, (200, 1606, 1040, 1648), "HARAS GB", footer_font, (116, 78, 49, 210))
 
     return canvas.convert("RGB"), button_rect
 
