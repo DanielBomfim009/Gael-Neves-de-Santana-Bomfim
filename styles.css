@@ -97,9 +97,10 @@ a {
 
 .action-dock {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(280px, 320px));
+  justify-content: center;
   gap: 16px;
-  width: min(100%, 980px);
+  width: min(100%, 760px);
   margin: 24px auto 0;
 }
 
@@ -308,6 +309,7 @@ a {
 @media (max-width: 860px) {
   .action-dock {
     grid-template-columns: 1fr;
+    width: min(100%, 420px);
   }
 
   .info-panel__head {
