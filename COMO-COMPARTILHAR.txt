@@ -1,0 +1,22 @@
+Para aparecer a imagem previa do convite no WhatsApp:
+
+1. Nao envie o arquivo .html como anexo.
+2. Hospede estes arquivos em um link publico:
+   - Gael Neves de Santana Bomfim.html
+   - styles.css
+   - script.js
+   - pasta assets/
+3. Envie o link hospedado no WhatsApp.
+
+Observacao importante:
+- Quando o WhatsApp recebe um arquivo .html anexado, ele mostra apenas um arquivo, sem a previa bonita do convite.
+- A previa com imagem so aparece quando o WhatsApp consegue ler a pagina pela internet.
+
+Arquivos de previa configurados:
+- og:image -> assets/social-preview.jpg
+- arte principal do convite -> assets/foto-1-web.jpg
+
+Se quiser maximizar a compatibilidade da previa:
+- use uma URL publica direta
+- mantenha assets/social-preview.jpg acessivel sem bloqueio
+- se necessario, troque a meta og:image para uma URL absoluta do seu dominio

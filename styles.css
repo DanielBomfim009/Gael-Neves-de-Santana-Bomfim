@@ -1,0 +1,343 @@
+:root {
+  --bg: #efe0c7;
+  --paper: #fbf3e6;
+  --paper-soft: rgba(251, 243, 230, 0.9);
+  --ink: #4d2f1c;
+  --muted: #7a5c45;
+  --gold: #c9a16b;
+  --brown: #704227;
+  --brown-deep: #432314;
+  --brown-soft: #9a6b42;
+  --shadow: 0 24px 60px rgba(58, 33, 19, 0.16);
+  --shadow-strong: 0 36px 90px rgba(49, 27, 15, 0.28);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top, rgba(255, 247, 232, 0.9), transparent 36%),
+    linear-gradient(180deg, #f7ecdc 0%, #e3cfb2 100%);
+}
+
+button,
+a {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.page-shell {
+  min-height: 100vh;
+  padding: 24px 18px 40px;
+}
+
+.invite-stage {
+  position: relative;
+  width: min(100%, 1180px);
+  margin: 0 auto;
+}
+
+.invite-stage__glow {
+  position: absolute;
+  inset: 5% 10% auto;
+  height: 80%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 241, 216, 0.85) 0%, rgba(255, 241, 216, 0) 68%);
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+.invite-card {
+  position: relative;
+  width: min(100%, 760px);
+  margin: 0 auto;
+  padding: 14px;
+  border-radius: 34px;
+  background:
+    linear-gradient(180deg, rgba(255, 252, 246, 0.95) 0%, rgba(240, 220, 191, 0.9) 100%);
+  box-shadow: var(--shadow-strong);
+}
+
+.invite-card::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border-radius: 26px;
+  border: 1px solid rgba(156, 111, 69, 0.32);
+  pointer-events: none;
+}
+
+.invite-card__art {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: auto;
+  border-radius: 22px;
+  display: block;
+  box-shadow: 0 18px 40px rgba(66, 37, 18, 0.18);
+}
+
+.action-dock {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  width: min(100%, 980px);
+  margin: 24px auto 0;
+}
+
+.leather-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 94px;
+  padding: 18px 16px;
+  border-radius: 24px;
+  color: #fff4e4;
+  background:
+    linear-gradient(180deg, rgba(196, 145, 92, 0.78) 0%, rgba(196, 145, 92, 0.16) 34%, transparent 34%),
+    linear-gradient(180deg, #8b5935 0%, #643a22 100%);
+  border: 2px solid rgba(87, 44, 21, 0.9);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 232, 197, 0.65),
+    inset 0 -5px 0 rgba(63, 30, 13, 0.45),
+    0 12px 24px rgba(59, 32, 16, 0.22);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+  text-align: left;
+}
+
+.leather-button:hover,
+.leather-button:focus-visible {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 232, 197, 0.7),
+    inset 0 -5px 0 rgba(63, 30, 13, 0.48),
+    0 16px 32px rgba(59, 32, 16, 0.28);
+}
+
+.leather-button strong,
+.leather-button small {
+  display: block;
+}
+
+.leather-button strong {
+  font-size: 1.08rem;
+}
+
+.leather-button small {
+  margin-top: 4px;
+  color: #f0d9b5;
+  font-size: 0.88rem;
+}
+
+.leather-button__icon {
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: rgba(255, 247, 235, 0.08);
+  border: 1px solid rgba(255, 238, 206, 0.15);
+}
+
+.leather-button__icon svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.info-panel {
+  width: min(100%, 860px);
+  margin: 26px auto 0;
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.info-panel.is-open {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.info-panel__inner {
+  padding: 28px;
+  border-radius: 32px;
+  background:
+    linear-gradient(180deg, rgba(255, 251, 245, 0.96) 0%, rgba(248, 239, 223, 0.96) 100%);
+  border: 1px solid rgba(166, 126, 89, 0.16);
+  box-shadow: var(--shadow);
+}
+
+.info-panel__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  color: var(--brown-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.info-panel__head h2 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1.04;
+  color: var(--brown);
+}
+
+.panel-close,
+.outline-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  padding: 0 22px;
+  border-radius: 999px;
+  background: rgba(255, 249, 239, 0.82);
+  border: 1px solid rgba(112, 66, 39, 0.28);
+  color: var(--brown);
+  font-weight: 700;
+}
+
+.gift-list {
+  display: grid;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.gift-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 20px 22px;
+  border-radius: 24px;
+  background: rgba(255, 252, 247, 0.82);
+  border: 1px solid rgba(185, 149, 111, 0.22);
+}
+
+.gift-item__icon {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: rgba(201, 161, 107, 0.22);
+  font-size: 1.5rem;
+}
+
+.gift-item strong {
+  display: block;
+  font-size: 1.22rem;
+  color: var(--brown);
+}
+
+.gift-item p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.panel-actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.outline-button--strong {
+  background: var(--brown);
+  color: #fff2dc;
+  border-color: var(--brown-deep);
+}
+
+.site-footer {
+  padding-top: 26px;
+  text-align: center;
+  color: var(--brown);
+}
+
+.site-footer p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 860px) {
+  .action-dock {
+    grid-template-columns: 1fr;
+  }
+
+  .info-panel__head {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 640px) {
+  .page-shell {
+    padding: 12px 10px 28px;
+  }
+
+  .invite-card {
+    width: 100%;
+    padding: 10px;
+    border-radius: 24px;
+  }
+
+  .invite-card::before {
+    inset: 6px;
+    border-radius: 18px;
+  }
+
+  .invite-card__art {
+    border-radius: 16px;
+  }
+
+  .action-dock {
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .leather-button {
+    min-height: 86px;
+    padding: 16px 14px;
+  }
+
+  .info-panel__inner {
+    padding: 20px;
+    border-radius: 24px;
+  }
+
+  .panel-actions {
+    flex-direction: column;
+  }
+}
