@@ -59,6 +59,24 @@ def centered_text(draw: ImageDraw.ImageDraw, box, text, font, fill, spacing=6):
     draw.multiline_text((x, y), text, font=font, fill=fill, spacing=spacing, align="center")
 
 
+def wrapped_text(text: str, font, max_width: int, draw: ImageDraw.ImageDraw) -> str:
+    words = text.split()
+    lines: list[str] = []
+    current = ""
+    for word in words:
+        test = word if not current else f"{current} {word}"
+        bbox = draw.textbbox((0, 0), test, font=font)
+        if bbox[2] - bbox[0] <= max_width:
+            current = test
+        else:
+            if current:
+                lines.append(current)
+            current = word
+    if current:
+        lines.append(current)
+    return "\n".join(lines)
+
+
 def build_cover_image() -> tuple[Image.Image, tuple[int, int, int, int]]:
     source = Image.open(ART_PATH).convert("RGB")
     background = ImageOps.fit(source, PAGE_SIZE, method=Image.Resampling.LANCZOS, centering=(0.5, 0.35))
@@ -73,30 +91,45 @@ def build_cover_image() -> tuple[Image.Image, tuple[int, int, int, int]]:
     draw.rounded_rectangle(panel, radius=42, fill=(251, 244, 231, 240), outline=(145, 100, 62, 255), width=4)
     draw.rounded_rectangle((116, 116, 1124, 1638), radius=34, outline=(205, 176, 137, 255), width=2)
 
-    art = Image.open(ART_PATH).convert("RGB")
-    art_card = ImageOps.fit(art, (760, 1140), method=Image.Resampling.LANCZOS, centering=(0.5, 0.48))
-    art_card = art_card.convert("RGBA")
-    art_shadow = Image.new("RGBA", (800, 1180), (0, 0, 0, 0))
-    shadow_draw = ImageDraw.Draw(art_shadow)
-    shadow_draw.rounded_rectangle((18, 18, 782, 1162), radius=28, fill=(0, 0, 0, 72))
-    canvas.alpha_composite(art_shadow, (220, 170))
-    draw.rounded_rectangle((240, 188, 1000, 1328), radius=28, fill=(255, 250, 243, 255), outline=(180, 141, 96, 255), width=3)
-    canvas.alpha_composite(art_card, (240, 188))
-
-    tag_box = (260, 1348, 980, 1412)
+    tag_box = (260, 154, 980, 218)
     draw.rounded_rectangle(tag_box, radius=20, fill=(225, 204, 169, 255))
     tag_font = load_font(28, bold=True)
     centered_text(draw, tag_box, "CONVITE OFICIAL", tag_font, (93, 56, 33, 255))
 
-    title_font = load_font(50, bold=True)
-    script_font = load_font(76, script=True)
-    body_font = load_font(28)
+    title_font = load_font(44, bold=True)
+    body_font = load_font(27)
+    sign_font = load_font(30, bold=True)
 
-    centered_text(draw, (200, 1436, 1040, 1490), "Toque no botao abaixo para", body_font, (115, 79, 51, 255))
-    centered_text(draw, (190, 1490, 1050, 1558), "abrir o convite interativo", load_font(42, bold=True), (107, 67, 39, 255))
-    centered_text(draw, (260, 1530, 980, 1592), "do Gael", load_font(58, script=True), (112, 121, 52, 255))
+    centered_text(draw, (180, 258, 1060, 332), "O de casa, vaqueiro(a)!", title_font, (102, 64, 38, 255))
 
-    button_rect = (274, 1588, 966, 1662)
+    message_1 = (
+        "Prepare o chapeu, a bota e a animacao para viver um dia especial, cheio de alegria, "
+        "diversao e boas lembrancas no Haras GB. E para deixar a festa ainda mais bonita e no "
+        "clima da comemoracao, convidamos voce a vir com seu traje country. Mas nao se preocupe "
+        "se nao tiver um look no estilo: sua presenca e o que realmente faz essa festa acontecer!"
+    )
+    message_2 = (
+        "Agradecemos por fazer parte desse momento tao importante na vida do nosso pequeno "
+        "vaqueiro. Sera uma honra celebrar ao seu lado essa data tao especial!"
+    )
+    max_text_width = 770
+    wrapped_1 = wrapped_text(message_1, body_font, max_text_width, draw)
+    wrapped_2 = wrapped_text(message_2, body_font, max_text_width, draw)
+
+    text_box_1 = (200, 370, 1040, 1010)
+    centered_text(draw, text_box_1, wrapped_1, body_font, (112, 77, 50, 255), spacing=12)
+
+    divider_y = 1046
+    draw.line((320, divider_y, 920, divider_y), fill=(198, 169, 128, 255), width=2)
+
+    text_box_2 = (220, 1086, 1020, 1288)
+    centered_text(draw, text_box_2, wrapped_2, body_font, (112, 77, 50, 255), spacing=12)
+
+    centered_text(draw, (240, 1320, 1000, 1366), "Com carinho,", body_font, (112, 77, 50, 255))
+    centered_text(draw, (220, 1382, 1020, 1470), "Familia do Gael", sign_font, (98, 62, 38, 255))
+    centered_text(draw, (220, 1450, 1020, 1512), "Haras GB", load_font(40, script=True), (109, 118, 51, 255))
+
+    button_rect = (274, 1558, 966, 1632)
     draw.rounded_rectangle((button_rect[0] + 4, button_rect[1] + 8, button_rect[2] + 4, button_rect[3] + 8), radius=26, fill=(63, 31, 15, 110))
     draw.rounded_rectangle(button_rect, radius=26, fill=(109, 66, 39, 255), outline=(67, 37, 20, 255), width=3)
     draw.rounded_rectangle((button_rect[0] + 6, button_rect[1] + 6, button_rect[2] - 6, button_rect[1] + 30), radius=20, fill=(188, 142, 95, 170))
