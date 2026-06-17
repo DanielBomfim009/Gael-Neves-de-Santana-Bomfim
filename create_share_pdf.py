@@ -146,7 +146,7 @@ def build_cover_image() -> tuple[Image.Image, tuple[int, int, int, int]]:
     )
     wrapped_thanks = wrapped_text(thanks, body_font, max_text_width, draw)
 
-    main_panel = (166, 506, 1074, 1436)
+    main_panel = (166, 506, 1074, 1458)
     draw.rounded_rectangle((main_panel[0] + 8, main_panel[1] + 10, main_panel[2] + 8, main_panel[3] + 10), radius=34, fill=(97, 61, 35, 34))
     draw.rounded_rectangle(main_panel, radius=34, fill=(255, 251, 244, 180), outline=(216, 191, 152, 255), width=2)
 
@@ -156,13 +156,13 @@ def build_cover_image() -> tuple[Image.Image, tuple[int, int, int, int]]:
     draw.line((326, divider_y, 914, divider_y), fill=(202, 173, 133, 255), width=2)
     draw.ellipse((611, divider_y - 8, 629, divider_y + 8), fill=(168, 128, 88, 255))
 
-    centered_text(draw, (218, 1132, 1022, 1280), wrapped_thanks, body_font, (112, 77, 50, 255), spacing=10)
-    centered_text(draw, (218, 1288, 1022, 1326), "Com carinho,", body_font, (112, 77, 50, 255))
-    centered_text(draw, (218, 1332, 1022, 1368), "\u2665", accent_font, (125, 84, 58, 255))
-    centered_text(draw, (218, 1364, 1022, 1408), "Fam\u00edlia do Gael", sign_font, (98, 62, 38, 255))
-    centered_text(draw, (218, 1400, 1022, 1434), "Haras GB", body_font, (109, 118, 51, 255))
+    centered_text(draw, (218, 1138, 1022, 1278), wrapped_thanks, body_font, (112, 77, 50, 255), spacing=10)
+    centered_text(draw, (218, 1288, 1022, 1320), "Com carinho,", body_font, (112, 77, 50, 255))
+    centered_text(draw, (218, 1322, 1022, 1350), "\u2665", accent_font, (125, 84, 58, 255))
+    centered_text(draw, (218, 1350, 1022, 1392), "Fam\u00edlia do Gael", sign_font, (98, 62, 38, 255))
+    centered_text(draw, (218, 1392, 1022, 1424), "Haras GB", body_font, (109, 118, 51, 255))
 
-    button_rect = (286, 1484, 954, 1574)
+    button_rect = (286, 1498, 954, 1588)
     draw.rounded_rectangle((button_rect[0] + 4, button_rect[1] + 8, button_rect[2] + 4, button_rect[3] + 8), radius=26, fill=(63, 31, 15, 110))
     draw.rounded_rectangle(button_rect, radius=26, fill=(109, 66, 39, 255), outline=(67, 37, 20, 255), width=3)
     draw.rounded_rectangle((button_rect[0] + 6, button_rect[1] + 6, button_rect[2] - 6, button_rect[1] + 34), radius=20, fill=(188, 142, 95, 170))
